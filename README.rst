@@ -6,6 +6,8 @@ Overview
 .. image:: https://travis-ci.org/dhagrow/journaltools.svg?branch=master
     :target: https://travis-ci.org/dhagrow/journaltools
 
+
+
 Motivation
 ----------
 
@@ -14,18 +16,25 @@ available options give me everything I want, with an API that I enjoy using.
 This library provides a lot of powerful functionality, but never at the cost of
 simplicity.
 
+
 Features
 --------
 
-* Automatic value conversion.
-* Section nesting.
-* Dict-like access.
-* Single-file module with no dependencies.
-* Extensible input/output formats.
-* Built-in support for INI files and the Windows registry.
-* Preserves ordering and comments of INI files.
-* Full Unicode support.
+* Identification using either title or DOI/ISBN
+* Downloading of full journal article with Sci-Hub (https://sci-hub.io)
+* Reference file renaming
+* Bibtex generation
+* Customisaton using configuration file
+* Fuzzy search support
 * Supports Python 2.7+ and 3.2+.
+
+
+To do
+--------
+
+* Better support for books
+
+
 
 Installation
 ------------
@@ -34,14 +43,41 @@ Installation
     
     $ pip install journaltools
 
+
+
 Example
 -------
 
-Basic usage is cake. Let's assume our config file looks like this::
+Let's download ::
     
-    [server]
-    host = 192.168.1.1
-    port = 9090
+
+```python
+j = journaltools()
+
+# download article by title
+j.download("Cognitive eipdemiology: Its rise, its current issues, and its challen")
+
+# by DOI
+j.download("10.1016/j.paid.2009.11.012")
+```
+
+Note that the title provided is both incomplete and contains a typo. The module uses fuzzy string matching, so minor errors are acceptable. 
+The article will be downloaded using Sci-Hub. If a captcha is required for downloading, it will load in your gui and you will be asked to solve it before proceeding.
+
+
+Maybe you're a weirdo like me and are deeply troubled by inconsistent filenames. No problem:
+
+```python
+
+j = journaltools()
+
+# download article by title
+journal.rename("Some ambiguously titled reference.pdf")
+# by DOI
+journal.download("10.1016/j.paid.2009.11.012")
+```
+
+
 
 First, we specify the defaults and types to expect::
     
