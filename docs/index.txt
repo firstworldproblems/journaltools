@@ -1,12 +1,7 @@
-.. profig documentation master file, created by
-   sphinx-quickstart on Sat Jun  8 01:16:06 2013.
-
-Behold, profig's documentation!
+journaltools guide
 ===============================
 
-*profig* is a straightforward configuration library for Python. Its
-objective is to make the most common tasks of configuration handling as
-simple as possible.
+*journaltools* is a collection of useful reference management tools, with a specific focus on peer-reviewed journal articles. It presently supports the identification, downloading and renaming of references, as well as the generation and conversion of bibtex files. I had initially written it for personal use but in the spirit of collaboration figured might also find it of use.
 
 Contents
 --------
