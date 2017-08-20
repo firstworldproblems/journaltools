@@ -1,0 +1,82 @@
+Recipes
+=======
+
+Setting Values from the Command-Line
+------------------------------------
+
+It can be convenient to provide users with the ability to override config
+options using command-line switches. Here is an example of how that can
+be done using `argparse`::
+    
+    cfg = profig.Config()
+    cfg.init('server.host', 'localhost')
+    cfg.init('server.port', 8080)
+    
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-O', dest='options', action='append',
+        metavar='<key>:<value>', help='Overrides an option in the config file')
+    
+    args = parser.parse_args(['-O', 'server.port:9090'])
+    
+    # update option values
+    cfg.update(opt.split(':') for opt in args.options)
+    
+    print(cfg['server.port']) # -> 9090
+
+If you need to provide a list of available options to the user, you can
+simply iterate over the config object::
+    
+    >>> for k in cfg:
+    ...     print(k)
+    server.host
+    server.port
+
+You can also restrict the options that can be set from the command-line to a
+specific section::
+    
+    args = parser.parse_args(['-O', 'port:9090'])
+    cfg.section('server').update(opt.split(':') for opt in args.options)
+
+Multiprocess Sychronization
+---------------------------
+
+One way to synchronize a config file across multiple processes is to use a
+lock file. This allows processes to make a modifications to a config file
+in a safe way and have that change be reflected across all other processes
+when they sync again.
+
+Here is an example using the `lockfile`_ module::
+    
+    >>> lock = lockfile.FileLock('.cfglock')
+    >>> with lock:
+    ...     cfg.sync()
+
+Serialization
+-------------
+
+Because :class:`~profig.Config` objects are based on dicts, it is easy to
+read/write configs from a serialization format such as JSON or msgpack::
+    
+    >>> import json
+    >>> s = json.dumps(cfg.as_dict())
+    >>> cfg.update(json.loads(s))
+
+Format Strings
+--------------
+
+:class:`~profig.Config` objects can be used directly in format strings in
+several ways::
+    
+    >>> '{0[server.host]}:{0[server.port]}'.format(cfg)
+    localhost:8080
+    >>> '{c[server.host]}:{c[server.port]}'.format(c=cfg)
+    localhost:8080
+    >>> '{host}:{port}'.format(**c.section('server'))
+    localhost:8080
+
+In my opinion, this largely resolves the use cases for the interpolation
+feature of the stdlib `configparser`_.
+
+
+.. _lockfile: https://pypi.python.org/pypi/lockfile
+.. _configparser: https://docs.python.org/3/library/configparser.html
